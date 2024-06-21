@@ -16,6 +16,11 @@ class UpdateLevel:
         self.color=255
         self.speed=-2
 
+        # tsountrack
+        self.tracks = ['Audio/Win/PitcherPerfectTheme.wav',
+                       'Audio/Win/VictoryLap.wav']
+        self.current_track = 0
+
     def update_chechpoint(self):
         if self.player.items==self.player.max_items and not self.checkpoint_activ:
             for sprite in self.all_sprites.sprites():
@@ -39,6 +44,37 @@ class UpdateLevel:
         if self.color<=0:
             self.color=0
             self.reset()
+
+    def play_music(self):
+        pygame.mixer.music.load(self.tracks[self.current_track])
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play()
+        self.current_track += 1
+        if self.current_track == len(self.tracks):
+            self.current_track = 0
+
+    def last_level_end(self):
+        if self.color==255:
+            pygame.mixer.music.stop()
+        if not pygame.mixer.music.get_busy():
+            self.play_music()
+
+        self.display_surf.fill((self.color,self.color,self.color),special_flags=pygame.BLEND_RGB_MULT)
+
+        self.color+=self.speed
+        if self.color<=0:
+            self.color=0
+            self.font = pygame.font.Font('Text/Painterz.ttf', 100)
+            self.font_surf = self.font.render("THE END", True, 'White')
+            x=self.display_surf.get_size()[0]/2-self.font_surf.get_size()[0]/2
+            y=self.display_surf.get_size()[1]/2-self.font_surf.get_size()[1]/2
+            self.display_surf.blit(self.font_surf, (x,y))
+            self.font = pygame.font.Font('Text/Painterz.ttf', 25)
+            self.font_surf = self.font.render("Tworcy:", True, 'White')
+            self.display_surf.blit(self.font_surf, (x+x/2-50,y+100))
+            self.font_surf = self.font.render("Robert Harasiuk i Wiktor Bebacz:", True, 'White')
+            self.display_surf.blit(self.font_surf, (x+20,y+120))
+
 
 
 

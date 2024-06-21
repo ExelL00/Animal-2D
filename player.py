@@ -120,7 +120,7 @@ class Player(pygame.sprite.Sprite):
 
             if keys[pygame.K_RETURN]:
                 interaction=pygame.sprite.spritecollide(self,self.interaction_sprites,False)
-                if interaction and self.items==self.max_items:
+                if interaction and self.items>=self.max_items:
                     self.newlvl_active=True
                     self.direction.x=0
                     self.direction.y=0

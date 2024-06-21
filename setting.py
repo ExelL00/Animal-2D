@@ -18,7 +18,7 @@ Layer={'Background_animation':0,
        'Enemy': 11,
        'Gracz': 12}
 
-Pos_Overlayer={ 1:(10,SCREEN_HEIGHT-40),
+Pos_Overlayer={1:(10,SCREEN_HEIGHT-40),
                2 :(22,SCREEN_HEIGHT-33),
                3 :(20,SCREEN_HEIGHT-45),
                4 :(10,SCREEN_HEIGHT-30)}

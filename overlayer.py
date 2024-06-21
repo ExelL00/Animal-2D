@@ -6,7 +6,7 @@ class Overlayer:
         self.player=player
         self.display_surafce=pygame.display.get_surface()
 
-        self.font=pygame.font.Font('Menu/Text/Painterz.ttf',30)
+        self.font=pygame.font.Font('Text/Painterz.ttf',30)
         self.font_surf=self.font.render(str(player.items),True,'White')
         self.slash_surf=self.font.render('/',True,'White')
         self.max_items_surf=self.font.render(str(self.player.max_items),True,'White')

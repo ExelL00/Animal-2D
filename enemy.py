@@ -21,12 +21,6 @@ class Enemy(pygame.sprite.Sprite):
         elif self.name=='Bee':
             self.size_img=36
             self.hp=1
-        elif self.name=='Rino':
-            self.size_img=52
-            self.hp=1
-        elif self.name=='Plant':
-            self.size_img=44
-            self.hp=1
 
         self.import_assets()
         self.all_sprites = all_sprites
@@ -55,18 +49,13 @@ class Enemy(pygame.sprite.Sprite):
             self.direction.y=int(choice([1,-1]))
             self.direction.x = int(choice([1, -1]))
             self.speed=1
-        elif self.name=='Rino':
-            self.hit_rino=False
             self.run=False
             self.speed=2
-        elif self.name=='Plant':
-            self.speed=0
 
 
         #timer
         self.timer={'Idle':Timer(500),
-                    'Attack':Timer(1000),
-                    'Idle_rino': Timer(300)}
+                    'Attack':Timer(1000)}
         self.attack_bee=self.timer['Attack'].active
 
         self.hit_pig=False
@@ -89,17 +78,6 @@ class Enemy(pygame.sprite.Sprite):
                                'Attack': [],
                                'BulletPieces':[],
                                'Bullet':[]}
-        elif self.name=='Rino':
-            self.animations = {'Idle': [],
-                               'Hit': [],
-                               'HitWall': [],
-                               'Run': []}
-        elif self.name=='Plant':
-            self.animations = {'Attack': [],
-                               'BulletPieces': [],
-                               'Bullet': [],
-                               'Hit': [],
-                               'Idle':[]}
 
 
         for img in self.animations.keys():
@@ -147,24 +125,12 @@ class Enemy(pygame.sprite.Sprite):
             elif not self.side and not self.timer['Idle'].active:
                 self.direction.x=-1
 
-        if self.alive and self.name=='Rino':
-            if self.player.rect.x<self.max_range_x and self.player.rect.x>self.min_range_x and self.max_range_y<self.player.rect.y and self.min_range_y>self.player.rect.y\
-                and not self.timer['Idle_rino'].active and self.alive:
-                self.run=True
 
     def colision_horizontal(self):
         self.pos.x += self.direction.x * self.speed
         self.hitbox.centerx = self.pos.x
         self.rect.centerx = self.hitbox.centerx
 
-        if self.name=='Rino':
-            if self.run and self.alive:
-                self.speed+=0.1
-                self.timer['Idle_rino'].acitvation()
-                if self.side:
-                    self.direction.x=1
-                else:
-                    self.direction.x=-1
 
 
         for sprite in self.range_enemy_sprites.sprites():
@@ -182,28 +148,6 @@ class Enemy(pygame.sprite.Sprite):
                         self.pos.x = self.hitbox.centerx
                         self.rect.centerx = self.pos.x
                         self.direction.x*=-1
-
-                if self.name=='Rino':
-                    if self.direction.x<0:
-                        self.hitbox.left = sprite.hitbox.right
-                        self.pos.x = self.hitbox.centerx
-                        self.rect.centerx = self.pos.x
-                        self.direction.x=0
-                        self.index=0
-                        self.hit_rino=True
-                        self.run=False
-                        self.speed=2
-
-                    elif self.direction.x>0:
-                        self.hitbox.right = sprite.hitbox.left
-                        self.pos.x = self.hitbox.centerx
-                        self.rect.centerx = self.pos.x
-                        self.direction.x=0
-                        self.index=0
-                        self.hit_rino=True
-                        self.run = False
-                        self.speed=2
-
                 if self.name=='AngryPig':
                     if self.direction.x<0:
                         self.side=True
@@ -252,17 +196,9 @@ class Enemy(pygame.sprite.Sprite):
             self.max_range_y=min(y)
             self.min_range_y=max(y)
 
-    def plant_attack(self):
-        if self.name=='Plant' and self.alive:
-            for sprite in self.range_enemy_sprites.sprites():
-                if hasattr(sprite, 'id'):
-                    if sprite.id!='3':
-                        if sprite.rect.colliderect(self.player.hitbox):
-                            self.status='Attack'
-
     def status_check(self):
         if self.direction.x!=0:
-            if self.name=='Chicken' or self.name=='Rino':
+            if self.name=='Chicken':
                 self.status = 'Run'
             if self.name=='AngryPig':
                 if self.hit_pig:
@@ -284,13 +220,6 @@ class Enemy(pygame.sprite.Sprite):
                         if not self.timer['Idle'].active:
                             self.hit_pig=False
 
-            if self.name=='Rino':
-                if self.hit_rino:
-                    self.status='HitWall'
-                    if self.index>=len(self.animations['HitWall'])-1:
-                        self.hit_rino=False
-                        self.side=not self.side
-                        self.status='Idle'
             else:
                 self.status = 'Idle'
 
@@ -372,6 +301,5 @@ class Enemy(pygame.sprite.Sprite):
         self.dmg_from_player()
         self.bullet_bee()
         self.timer_update()
-        self.plant_attack()
         if self.rect.y>SCREEN_HEIGHT+40:
             self.kill()

@@ -6,6 +6,7 @@ from sprites import Generic,Fruit,Animate,Boxes
 from overlayer import Overlayer
 from support import import_img,import_csv
 from updatelevel import UpdateLevel
+from menu import Menu
 from random import choice
 from enemy import Enemy
 
@@ -14,6 +15,8 @@ class Level:
     def __init__(self):
         self.display_surface=pygame.display.get_surface()
         self.lvl=1
+        self.Menu=Menu()
+
         #groups
         self.all_sprites=CameraGroup()
         self.collision_sprites=pygame.sprite.Group()
@@ -24,15 +27,22 @@ class Level:
         self.restart=True
         self.color=0
         self.speed_blend=2
-        #setup
-        self.setup()
 
+        if self.lvl<3:
+            #setup
+            self.setup()
+            #overlayer
+            self.overlayer=Overlayer(self.player)
 
-        #overlayer
-        self.overlayer=Overlayer(self.player)
+            #update lvl
+            self.updatelevel=UpdateLevel(self.player,self.all_sprites,self.reset)
 
-        #update lvl
-        self.updatelevel=UpdateLevel(self.player,self.all_sprites,self.reset)
+            #tsountrack
+            self.tracks=['Audio/Soundtrack/Soundtrack1.wav',
+                         'Audio/Soundtrack/Soundtrack2.wav',
+                         'Audio/Soundtrack/Soundtrack3.wav',
+                         'Audio/Soundtrack/Soundtrack4.wav']
+            self.current_track=0
 
     def setup(self):
         tmx_data=load_pygame('Data/Level'+' '+str(self.lvl)+'/Mapa.tmx')
@@ -156,26 +166,44 @@ class Level:
         self.overlayer = Overlayer(self.player)
         self.updatelevel = UpdateLevel(self.player, self.all_sprites, self.reset)
 
+    def play_music(self):
+        pygame.mixer.music.load(self.tracks[self.current_track])
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play()
+        self.current_track+=1
+        if self.current_track==len(self.tracks):
+            self.current_track=0
+
+
+
     def run(self):
-        self.all_sprites.custom_draw()
-        self.all_sprites.update()
-        self.animation_background()
-        self.overlayer.display()
-        self.updatelevel.update_chechpoint()
+        if self.Menu.menu_start==False:
+            self.all_sprites.custom_draw()
+            self.all_sprites.update()
+            self.animation_background()
+            self.overlayer.display()
+            self.updatelevel.update_chechpoint()
 
-        if self.restart:
-            self.display_surface.fill((self.color,self.color,self.color),special_flags=pygame.BLEND_RGB_MULT)
+            if self.restart:
+                self.display_surface.fill((self.color,self.color,self.color),special_flags=pygame.BLEND_RGB_MULT)
 
-            self.color+=self.speed_blend
-            if self.color>=255:
-                self.color=0
-                self.restart=False
-                self.player.restart=self.restart
+                self.color+=self.speed_blend
+                if self.color>=255:
+                    self.color=0
+                    self.restart=False
+                    self.player.restart=self.restart
 
-        if not self.player.alive:
-            self.updatelevel.next_level()
-        if self.player.newlvl_active:
-            self.updatelevel.next_level()
+            if not self.player.alive:
+                self.updatelevel.next_level()
+            if self.player.newlvl_active and self.lvl<2:
+                self.updatelevel.next_level()
+            if self.player.newlvl_active and self.lvl==2:
+                self.updatelevel.last_level_end()
+            else:
+                if not pygame.mixer.music.get_busy():
+                    self.play_music()
+        else:
+            self.Menu.run()
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self):
