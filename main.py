@@ -1,5 +1,5 @@
 import pygame,sys
-from setting import *
+from setting import SCREEN_WIDTH, SCREEN_HEIGHT
 from level import Level
 
 
@@ -9,8 +9,8 @@ class Game():
         self.screen=pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
         pygame.display.set_caption('Animal 2D')
         self.level=Level()
-        self.game()
-    def game(self):
+        self.startgame()
+    def startgame(self):
         while True:
             self.event()
             self.refresh_screen()

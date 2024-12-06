@@ -1,5 +1,5 @@
 import pygame
-from setting import *
+from setting import Layer
 from support import import_img
 from sprites import Animate
 
@@ -72,7 +72,7 @@ class UpdateLevel:
             self.font = pygame.font.Font('Text/Painterz.ttf', 25)
             self.font_surf = self.font.render("Tworcy:", True, 'White')
             self.display_surf.blit(self.font_surf, (x+x/2-50,y+100))
-            self.font_surf = self.font.render("Robert Harasiuk i Wiktor Bebacz:", True, 'White')
+            self.font_surf = self.font.render("Robert Harasiuk", True, 'White')
             self.display_surf.blit(self.font_surf, (x+20,y+120))
 
 
